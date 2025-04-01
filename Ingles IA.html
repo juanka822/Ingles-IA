@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia de Inglés - Inglés Amable</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("registro");
+            const trivia = document.getElementById("trivia");
+            const resultado = document.getElementById("resultado");
+            const preguntas = [
+                { pregunta: "What is the synonym of 'happy'?", opciones: ["Sad", "Joyful", "Angry", "Tired", "Weak"], correcta: 1 },
+                { pregunta: "Choose the correct past tense of 'go'.", opciones: ["Goed", "Gone", "Went", "Goes", "Go"], correcta: 2 },
+                { pregunta: "Select the correct article: ___ apple.", opciones: ["A", "An", "The", "Some", "None"], correcta: 1 },
+                { pregunta: "Which word is an adjective?", opciones: ["Run", "Quick", "Jump", "Sing", "Talk"], correcta: 1 },
+                { pregunta: "What is the plural of 'mouse'?", opciones: ["Mouses", "Mouse", "Mice", "Mousies", "Mousen"], correcta: 2 }
+            ];
+            let indicePregunta = 0;
+            let puntaje = 0;
+            
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                form.style.display = "none";
+                trivia.style.display = "block";
+                mostrarPregunta();
+            });
+            
+            function mostrarPregunta() {
+                if (indicePregunta < preguntas.length) {
+                    const preguntaActual = preguntas[indicePregunta];
+                    document.getElementById("pregunta").textContent = preguntaActual.pregunta;
+                    const opcionesDiv = document.getElementById("opciones");
+                    opcionesDiv.innerHTML = "";
+                    preguntaActual.opciones.forEach((opcion, index) => {
+                        let btn = document.createElement("button");
+                        btn.textContent = opcion;
+                        btn.className = "opcion";
+                        btn.onclick = () => seleccionarRespuesta(index);
+                        opcionesDiv.appendChild(btn);
+                    });
+                } else {
+                    mostrarResultados();
+                }
+            }
+            
+            function seleccionarRespuesta(index) {
+                const botones = document.querySelectorAll(".opcion");
+                botones.forEach(btn => btn.disabled = true);
+                if (index === preguntas[indicePregunta].correcta) {
+                    botones[index].classList.add("correcta");
+                    puntaje++;
+                } else {
+                    botones[index].classList.add("incorrecta");
+                    botones[preguntas[indicePregunta].correcta].classList.add("correcta");
+                }
+                document.getElementById("siguiente").disabled = false;
+            }
+            
+            document.getElementById("siguiente").addEventListener("click", function () {
+                indicePregunta++;
+                document.getElementById("siguiente").disabled = true;
+                mostrarPregunta();
+            });
+            
+            function mostrarResultados() {
+                trivia.style.display = "none";
+                resultado.style.display = "block";
+                document.getElementById("puntaje").textContent = `Puntaje: ${puntaje}/${preguntas.length}`;
+                let mensaje = "";
+                if (puntaje === preguntas.length) mensaje = "¡Excelente trabajo!";
+                else if (puntaje >= preguntas.length / 2) mensaje = "¡Buen intento! Sigue practicando.";
+                else mensaje = "Necesitas mejorar. ¡No te rindas!";
+                document.getElementById("mensaje").textContent = mensaje;
+            }
+        });
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .correcta { background-color: green; color: white; }
+        .incorrecta { background-color: red; color: white; }
+        .marca-agua { position: fixed; bottom: 10px; right: 10px; opacity: 0.5; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Trivia de Inglés - Inglés Amable</h1>
+    <form id="registro">
+        <input type="text" placeholder="Nombre completo" required><br>
+        <input type="email" placeholder="Correo electrónico" required><br>
+        <input type="text" placeholder="Salón" required><br>
+        <input type="text" placeholder="Maestro" required><br>
+        <button type="submit">Iniciar Trivia</button>
+    </form>
+    
+    <div id="trivia" style="display:none;">
+        <h2 id="pregunta"></h2>
+        <div id="opciones"></div>
+        <button id="siguiente" disabled>Siguiente</button>
+    </div>
+    
+    <div id="resultado" style="display:none;">
+        <h2 id="puntaje"></h2>
+        <p id="mensaje"></p>
+    </div>
+    
+    <div class="marca-agua">Inglés Amable / IA</div>
+</body>
+</html>
